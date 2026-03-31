@@ -3,110 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Sensor & AQI Dashboard</title>
+    <title>Sensor Dashboard | Project Submission</title>
     <style>
         :root {
-            --bg: #f0f2f5;
-            --card: #ffffff;
-            --primary: #007bff;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
+            --bg: #f4f7f9; --card: #ffffff; --primary: #007bff;
+            --success: #28a745; --warning: #ffc107; --danger: #dc3545;
         }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
+        #connectBtn { background: var(--primary); color: white; }
 
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
+        /* Main Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .card { background: var(--card); padding: 15px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .card h3 { font-size: 0.85rem; color: #666; margin: 0; text-transform: uppercase; }
+        .value { font-size: 1.6rem; font-weight: bold; margin: 8px 0; color: #222; }
+        
+        /* AQI Section */
+        .aqi-container { background: var(--card); padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .aqi-num { font-size: 4.5rem; font-weight: 900; line-height: 1; margin: 10px 0; }
+        .status-pill { padding: 6px 20px; border-radius: 20px; color: white; font-weight: bold; font-size: 1.1rem; }
 
-        .container { max-width: 900px; margin: 0 auto; }
+        /* Gas PPM List */
+        .gas-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
+        .gas-item { font-size: 0.9rem; color: #555; }
+        .gas-item b { color: #000; display: block; font-size: 1.1rem; }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        #connectBtn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            background: var(--primary);
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        #connectBtn.connected { background: var(--success); }
-
-        /* Dashboard Grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: var(--card);
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
-        .card h3 { font-size: 0.9rem; color: #666; margin: 0; }
-        .value { font-size: 1.8rem; font-weight: bold; margin: 10px 0; }
-        .unit { font-size: 0.8rem; color: #999; }
-
-        /* AQI Box */
-        .aqi-section {
-            background: var(--card);
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .aqi-display {
-            font-size: 4rem;
-            font-weight: 900;
-            margin: 10px 0;
-            transition: color 0.3s ease;
-        }
-
-        .status-badge {
-            padding: 5px 15px;
-            border-radius: 20px;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        /* History Table */
-        .history-card {
-            background: var(--card);
-            padding: 20px;
-            border-radius: 12px;
-        }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { text-align: left; color: #666; font-size: 0.8rem; border-bottom: 2px solid var(--bg); padding: 10px; }
-        td { padding: 10px; border-bottom: 1px solid var(--bg); font-size: 0.9rem; }
-
-        .clear-btn {
-            background: none;
-            border: 1px solid #ccc;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            float: right;
-        }
+        /* Table */
+        .history { background: var(--card); padding: 20px; border-radius: 12px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        th { color: #888; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -114,155 +44,155 @@
 <div class="container">
     <div class="header">
         <h1>Live Sensor Dashboard</h1>
-        <button id="connectBtn">🔌 Connect Sensor</button>
+        <button id="connectBtn" class="btn">🔌 Connect Live Sensor</button>
     </div>
 
-    <div class="dashboard-grid">
-        <div class="card"><h3>Temp (DHT)</h3><div class="value" id="v-temp">--</div><div class="unit">°C</div></div>
-        <div class="card"><h3>Humidity</h3><div class="value" id="v-hum">--</div><div class="unit">%</div></div>
-        <div class="card"><h3>Pressure</h3><div class="value" id="v-press">--</div><div class="unit">hPa</div></div>
-        <div class="card"><h3>Altitude</h3><div class="value" id="v-alt">--</div><div class="unit">m</div></div>
+    <div class="aqi-container">
+        <h2 style="margin:0; color:#555;">Air Quality Index (AQI)</h2>
+        <div id="aqi-display" class="aqi-num">--</div>
+        <span id="aqi-status" class="status-pill">Loading...</span>
+        
+        <div class="gas-details" id="gas-ppm-list">
+            </div>
     </div>
 
-    <div class="aqi-section">
-        <h2>Air Quality Index (AQI)</h2>
-        <div id="aqi-value" class="aqi-display">--</div>
-        <span id="aqi-status" class="status-badge" style="background:#ccc">Waiting for Data</span>
-        <p style="font-size: 0.8rem; color: #777; margin-top: 15px;">Calculated based on CO, NH3, and Smoke levels</p>
+    <div class="grid">
+        <div class="card"><h3>Temp (DHT)</h3><div class="value"><span id="v-temp">--</span>°C</div></div>
+        <div class="card"><h3>Humidity</h3><div class="value"><span id="v-hum">--</span>%</div></div>
+        <div class="card"><h3>Pressure</h3><div class="value"><span id="v-press">--</span> hPa</div></div>
+        <div class="card"><h3>Altitude</h3><div class="value"><span id="v-alt">--</span>m</div></div>
     </div>
 
-    <div class="history-card">
-        <button class="clear-btn" onclick="clearHistory()">Clear History</button>
-        <h3>Recent Readings Log</h3>
+    <div class="history">
+        <h3 style="margin-top:0">Historical Logs (Stored Locally)</h3>
         <table>
             <thead>
                 <tr>
-                    <th>Time</th>
+                    <th>Timestamp</th>
+                    <th>AQI</th>
+                    <th>CO (ppm)</th>
+                    <th>NH3 (ppm)</th>
                     <th>Temp</th>
-                    <th>Humidity</th>
-                    <th>AQI Score</th>
                 </tr>
             </thead>
-            <tbody id="history-body">
-                </tbody>
+            <tbody id="log-body"></tbody>
         </table>
     </div>
 </div>
 
 <script>
-    const connectBtn = document.getElementById('connectBtn');
-    const historyBody = document.getElementById('history-body');
-    
-    let port;
-    let reader;
-
-    // --- 1. LOAD SAVED DATA ON START ---
-    window.onload = () => {
-        const history = JSON.parse(localStorage.getItem('sensorLog') || '[]');
-        renderHistory(history);
-        if(history.length > 0) updateMainDisplay(history[0], false); 
+    // --- SAMPLE DATA FOR SUBMISSION ---
+    // This is the data you noted previously. 
+    const sampleData = {
+        temp_dht: 25.80,
+        hum: 46.00,
+        press: 950.4,
+        alt: 536.6,
+        gases: {
+            co2: 9.70, co: 26.70, alcohol: 5.73, nh3: 13.50, 
+            toluene: 2.70, acetone: 2.22, benzene: 2.98, smoke: 2.83, nox: 6.47
+        }
     };
 
-    // --- 2. AQI CALCULATION LOGIC ---
-    function calculateAQI(gases) {
-        // Weighted formula for the dashboard's specific gas sensors
-        // Typical "Good" ranges for these specific MQ sensors:
-        const score = (gases.co * 0.4) + (gases.nh3 * 0.3) + (gases.smoke * 0.3);
-        return Math.round(score * 4); // Scaled for visualization
+    const connectBtn = document.getElementById('connectBtn');
+
+    // 1. AQI Logic
+    function getAQIInfo(gases) {
+        // Calculation based on your sensor outputs
+        const val = Math.round((gases.co * 0.4) + (gases.nh3 * 0.3) + (gases.smoke * 0.3) * 5);
+        if (val <= 50) return { val, label: "Good", color: "#28a745" };
+        if (val <= 100) return { val, label: "Moderate", color: "#ffc107" };
+        return { val, label: "Unhealthy", color: "#dc3545" };
     }
 
-    function getStatus(aqi) {
-        if (aqi < 50) return { label: "Excellent", color: "#28a745" };
-        if (aqi < 100) return { label: "Good", color: "#92d050" };
-        if (aqi < 150) return { label: "Moderate", color: "#ffc107" };
-        return { label: "Poor", color: "#dc3545" };
-    }
+    // 2. Update the Screen
+    function updateUI(data) {
+        const aqi = getAQIInfo(data.gases);
+        
+        // Update AQI
+        document.getElementById('aqi-display').textContent = aqi.val;
+        document.getElementById('aqi-display').style.color = aqi.color;
+        const status = document.getElementById('aqi-status');
+        status.textContent = aqi.label;
+        status.style.backgroundColor = aqi.color;
 
-    // --- 3. UI UPDATES & PERSISTENCE ---
-    function updateMainDisplay(data, shouldSave = true) {
-        const aqi = calculateAQI(data.gases || data.aqi_raw_data); // Handle both live/saved
-        const status = getStatus(aqi);
-
-        document.getElementById('v-temp').textContent = data.temp_dht || data.temp;
+        // Update Environment
+        document.getElementById('v-temp').textContent = data.temp_dht;
         document.getElementById('v-hum').textContent = data.hum;
-        document.getElementById('v-press').textContent = data.press || '--';
-        document.getElementById('v-alt').textContent = data.alt || '--';
-        
-        const aqiEl = document.getElementById('aqi-value');
-        aqiEl.textContent = aqi;
-        aqiEl.style.color = status.color;
-        
-        const statusEl = document.getElementById('aqi-status');
-        statusEl.textContent = status.label;
-        statusEl.style.backgroundColor = status.color;
+        document.getElementById('v-press').textContent = data.press;
+        document.getElementById('v-alt').textContent = data.alt;
 
-        if (shouldSave) saveToStorage(data, aqi);
+        // Update All Gas PPMs
+        const gasList = document.getElementById('gas-ppm-list');
+        gasList.innerHTML = Object.entries(data.gases).map(([name, val]) => `
+            <div class="gas-item">${name.toUpperCase()}<b>${val}</b></div>
+        `).join('');
     }
 
-    function saveToStorage(data, aqi) {
-        let history = JSON.parse(localStorage.getItem('sensorLog') || '[]');
-        const entry = {
-            time: new Date().toLocaleTimeString(),
-            temp: data.temp_dht,
-            hum: data.hum,
-            aqi: aqi
-        };
-        history.unshift(entry);
-        history = history.slice(0, 10); // Keep last 10
-        localStorage.setItem('sensorLog', JSON.stringify(history));
-        renderHistory(history);
+    // 3. Handle Persistence
+    function init() {
+        let history = JSON.parse(localStorage.getItem('mySensorLogs'));
+        
+        // If no data exists (first time opening), use our sampleData
+        if (!history || history.length === 0) {
+            const firstEntry = { ...sampleData, time: "Previous Record" };
+            history = [firstEntry];
+            localStorage.setItem('mySensorLogs', JSON.stringify(history));
+        }
+
+        updateUI(history[0]);
+        renderTable(history);
     }
 
-    function renderHistory(history) {
-        historyBody.innerHTML = history.map(h => `
+    function renderTable(history) {
+        const body = document.getElementById('log-body');
+        body.innerHTML = history.map(h => `
             <tr>
-                <td>${h.time}</td>
-                <td>${h.temp}°C</td>
-                <td>${h.hum}%</td>
-                <td style="font-weight:bold; color:${getStatus(h.aqi).color}">${h.aqi}</td>
+                <td>${h.time || new Date().toLocaleTimeString()}</td>
+                <td style="font-weight:bold; color:${getAQIInfo(h.gases).color}">${getAQIInfo(h.gases).val}</td>
+                <td>${h.gases.co}</td>
+                <td>${h.gases.nh3}</td>
+                <td>${h.temp_dht}°C</td>
             </tr>
         `).join('');
     }
 
-    function clearHistory() {
-        localStorage.removeItem('sensorLog');
-        location.reload();
-    }
-
-    // --- 4. SERIAL CONNECTION ---
+    // 4. Live Connection (Web Serial)
     connectBtn.addEventListener('click', async () => {
         try {
-            port = await navigator.serial.requestPort();
+            const port = await navigator.serial.requestPort();
             await port.open({ baudRate: 115200 });
+            connectBtn.textContent = "✅ System Online";
             
-            connectBtn.textContent = "✅ Connected";
-            connectBtn.classList.add('connected');
-
-            const textDecoder = new TextDecoderStream();
-            port.readable.pipeTo(textDecoder.writable);
-            reader = textDecoder.readable.getReader();
+            const decoder = new TextDecoderStream();
+            port.readable.pipeTo(decoder.writable);
+            const reader = decoder.readable.getReader();
 
             let buffer = "";
             while (true) {
                 const { value, done } = await reader.read();
                 if (done) break;
                 buffer += value;
-                
                 if (buffer.includes('\n')) {
                     const lines = buffer.split('\n');
-                    buffer = lines.pop(); 
-                    lines.forEach(line => {
-                        try {
-                            const data = JSON.parse(line);
-                            updateMainDisplay(data);
-                        } catch(e) {}
-                    });
+                    buffer = lines.pop();
+                    const latest = JSON.parse(lines[lines.length-1]);
+                    
+                    // Save new live data to history
+                    let history = JSON.parse(localStorage.getItem('mySensorLogs') || '[]');
+                    latest.time = new Date().toLocaleTimeString();
+                    history.unshift(latest);
+                    history = history.slice(0, 10);
+                    localStorage.setItem('mySensorLogs', JSON.stringify(history));
+                    
+                    updateUI(latest);
+                    renderTable(history);
                 }
             }
-        } catch (err) {
-            alert("Serial Connection Failed: " + err);
-        }
+        } catch (e) { console.log(e); }
     });
+
+    init(); // Run on startup
 </script>
 
 </body>
