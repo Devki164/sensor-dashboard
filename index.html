@@ -3,52 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sensor Dashboard | Project Submission</title>
+    <title>Remote Weather Station | Environmental Dashboard</title>
     <style>
         :root {
-            --bg: #f4f7f9; --card: #ffffff; --primary: #007bff;
-            --success: #28a745; --warning: #ffc107; --danger: #dc3545;
+            --bg: #f0f4f8; --card: #ffffff; --primary: #2c3e50; --accent: #3498db;
+            --success: #27ae60; --warning: #f39c12; --danger: #c0392b;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 1000px; margin: 0 auto; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 1050px; margin: 0 auto; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
-        #connectBtn { background: var(--primary); color: white; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #ddd; padding-bottom: 15px; }
+        h1 { margin: 0; color: var(--primary); font-size: 1.8rem; }
+        .btn { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        #connectBtn { background: var(--accent); color: white; }
+        #connectBtn:hover { background: #2980b9; }
 
-        /* Main Grid */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .card { background: var(--card); padding: 15px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .card h3 { font-size: 0.85rem; color: #666; margin: 0; text-transform: uppercase; }
-        .value { font-size: 1.6rem; font-weight: bold; margin: 8px 0; color: #222; }
+        /* Main Atmospheric Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .card { background: var(--card); padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.04); border-top: 4px solid var(--primary); }
+        .card h3 { font-size: 0.9rem; color: #7f8c8d; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 1px; }
+        .value { font-size: 2rem; font-weight: 700; margin: 0; color: #2c3e50; }
+        .unit { font-size: 1rem; color: #95a5a6; font-weight: normal; }
         
-        /* AQI Section */
-        .aqi-container { background: var(--card); padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .aqi-num { font-size: 4.5rem; font-weight: 900; line-height: 1; margin: 10px 0; }
-        .status-pill { padding: 6px 20px; border-radius: 20px; color: white; font-weight: bold; font-size: 1.1rem; }
+        /* Air Quality Section */
+        .aqi-container { background: var(--card); padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #e1e8ed; }
+        .aqi-num { font-size: 5rem; font-weight: 900; line-height: 1; margin: 15px 0; color: #2c3e50; }
+        .status-pill { padding: 8px 24px; border-radius: 25px; color: white; font-weight: bold; font-size: 1.2rem; display: inline-block; }
 
-        /* Gas PPM List */
-        .gas-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
-        .gas-item { font-size: 0.9rem; color: #555; }
-        .gas-item b { color: #000; display: block; font-size: 1.1rem; }
+        /* Focused Gas PPM List */
+        .gas-details { display: flex; justify-content: center; flex-wrap: wrap; gap: 30px; margin-top: 25px; border-top: 1px solid #ecf0f1; padding-top: 25px; }
+        .gas-item { font-size: 1rem; color: #7f8c8d; text-align: center; background: #f8f9fa; padding: 15px 25px; border-radius: 8px; min-width: 120px;}
+        .gas-item b { color: #2c3e50; display: block; font-size: 1.6rem; margin-top: 5px; }
 
-        /* Table */
-        .history { background: var(--card); padding: 20px; border-radius: 12px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-        th { color: #888; font-weight: 600; }
+        /* History Table */
+        .history { background: var(--card); padding: 25px; border-radius: 10px; overflow-x: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.04); }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; margin-top: 15px; }
+        th, td { padding: 15px 12px; text-align: left; border-bottom: 1px solid #ecf0f1; font-size: 0.95rem; }
+        th { color: #34495e; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; }
+        tbody tr:hover { background-color: #f9fbfd; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1>Live Sensor Dashboard</h1>
-        <button id="connectBtn" class="btn">🔌 Connect Live Sensor</button>
+        <h1>🌦️ Remote Weather & Environmental Station</h1>
+        <button id="connectBtn" class="btn">🔌 Connect Live Hardware</button>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h3>Temperature</h3>
+            <div class="value"><span id="v-temp">--</span><span class="unit">°C</span></div>
+        </div>
+        <div class="card">
+            <h3>Relative Humidity</h3>
+            <div class="value"><span id="v-hum">--</span><span class="unit">%</span></div>
+        </div>
+        <div class="card">
+            <h3>Barometric Pressure</h3>
+            <div class="value"><span id="v-press">--</span><span class="unit"> hPa</span></div>
+        </div>
+        <div class="card">
+            <h3>Calculated Altitude</h3>
+            <div class="value"><span id="v-alt">--</span><span class="unit">m</span></div>
+        </div>
     </div>
 
     <div class="aqi-container">
-        <h2 style="margin:0; color:#555;">Air Quality Index (AQI)</h2>
+        <h2 style="margin:0; color:#7f8c8d; text-transform: uppercase; font-size: 1rem; letter-spacing: 1px;">Overall Air Quality Index (AQI)</h2>
         <div id="aqi-display" class="aqi-num">--</div>
         <span id="aqi-status" class="status-pill">Loading...</span>
         
@@ -56,23 +79,18 @@
             </div>
     </div>
 
-    <div class="grid">
-        <div class="card"><h3>Temp (DHT)</h3><div class="value"><span id="v-temp">--</span>°C</div></div>
-        <div class="card"><h3>Humidity</h3><div class="value"><span id="v-hum">--</span>%</div></div>
-        <div class="card"><h3>Pressure</h3><div class="value"><span id="v-press">--</span> hPa</div></div>
-        <div class="card"><h3>Altitude</h3><div class="value"><span id="v-alt">--</span>m</div></div>
-    </div>
-
     <div class="history">
-        <h3 style="margin-top:0">Historical Logs (Stored Locally)</h3>
+        <h3 style="margin:0; color: #2c3e50;">Local Telemetry Logs</h3>
+        <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: #7f8c8d;">Recent environmental readings stored locally in browser session.</p>
         <table>
             <thead>
                 <tr>
                     <th>Timestamp</th>
-                    <th>AQI</th>
-                    <th>CO (ppm)</th>
-                    <th>NH3 (ppm)</th>
-                    <th>Temp</th>
+                    <th>Temp (°C)</th>
+                    <th>CO₂ (ppm)</th>
+                    <th>Methane/CH₄ (ppm)</th>
+                    <th>NH₃ (ppm)</th>
+                    <th>Calculated AQI</th>
                 </tr>
             </thead>
             <tbody id="log-body"></tbody>
@@ -81,63 +99,66 @@
 </div>
 
 <script>
-    // --- SAMPLE DATA FOR SUBMISSION ---
-    // This is the data you noted previously. 
+    // --- SAMPLE DATA: Strictly Weather & Gas Station Focus ---
+    // Values set to realistic atmospheric baselines
     const sampleData = {
-        temp_dht: 25.80,
-        hum: 46.00,
-        press: 950.4,
-        alt: 536.6,
+        temp_dht: 26.30,
+        hum: 52.40,
+        press: 1012.5,
+        alt: 124.3,
         gases: {
-            co2: 9.70, co: 26.70, alcohol: 5.73, nh3: 13.50, 
-            toluene: 2.70, acetone: 2.22, benzene: 2.98, smoke: 2.83, nox: 6.47
+            "CO₂": 415.80,    // Standard atmospheric CO2
+            "Methane": 1.92,  // Standard atmospheric CH4
+            "NH₃": 0.05,      // Standard baseline Ammonia
+            "CO": 0.15        // Baseline Carbon Monoxide
         }
     };
 
     const connectBtn = document.getElementById('connectBtn');
 
-    // 1. AQI Logic
+    // 1. AQI Logic (Tailored for Weather Station Gases)
     function getAQIInfo(gases) {
-        // Calculation based on your sensor outputs
-        const val = Math.round((gases.co * 0.4) + (gases.nh3 * 0.3) + (gases.smoke * 0.3) * 5);
-        if (val <= 50) return { val, label: "Good", color: "#28a745" };
-        if (val <= 100) return { val, label: "Moderate", color: "#ffc107" };
-        return { val, label: "Unhealthy", color: "#dc3545" };
+        // Simplified heuristic combining CO2 deviations and trace gases
+        const co2Penalty = Math.max(0, (gases["CO₂"] - 400) * 0.1);
+        const tracePenalty = (gases["Methane"] * 5) + (gases["NH₃"] * 50) + (gases["CO"] * 10);
+        const val = Math.round(15 + co2Penalty + tracePenalty); // Baseline ~20 AQI
+
+        if (val <= 50) return { val, label: "Good", color: "var(--success)" };
+        if (val <= 100) return { val, label: "Moderate", color: "var(--warning)" };
+        return { val, label: "Unhealthy", color: "var(--danger)" };
     }
 
     // 2. Update the Screen
     function updateUI(data) {
         const aqi = getAQIInfo(data.gases);
         
-        // Update AQI
+        // Update AQI Module
         document.getElementById('aqi-display').textContent = aqi.val;
-        document.getElementById('aqi-display').style.color = aqi.color;
         const status = document.getElementById('aqi-status');
         status.textContent = aqi.label;
         status.style.backgroundColor = aqi.color;
 
-        // Update Environment
-        document.getElementById('v-temp').textContent = data.temp_dht;
-        document.getElementById('v-hum').textContent = data.hum;
-        document.getElementById('v-press').textContent = data.press;
-        document.getElementById('v-alt').textContent = data.alt;
+        // Update Weather Metrics
+        document.getElementById('v-temp').textContent = data.temp_dht.toFixed(1);
+        document.getElementById('v-hum').textContent = data.hum.toFixed(1);
+        document.getElementById('v-press').textContent = data.press.toFixed(1);
+        document.getElementById('v-alt').textContent = data.alt.toFixed(1);
 
-        // Update All Gas PPMs
+        // Update Specific Gas Target UI
         const gasList = document.getElementById('gas-ppm-list');
         gasList.innerHTML = Object.entries(data.gases).map(([name, val]) => `
-            <div class="gas-item">${name.toUpperCase()}<b>${val}</b></div>
+            <div class="gas-item">${name} <b>${val.toFixed(2)}</b> <span style="font-size:0.8rem">ppm</span></div>
         `).join('');
     }
 
-    // 3. Handle Persistence
+    // 3. Handle Persistence & Logging
     function init() {
-        let history = JSON.parse(localStorage.getItem('mySensorLogs'));
+        let history = JSON.parse(localStorage.getItem('weatherStationLogs'));
         
-        // If no data exists (first time opening), use our sampleData
         if (!history || history.length === 0) {
-            const firstEntry = { ...sampleData, time: "Previous Record" };
+            const firstEntry = { ...sampleData, time: new Date().toLocaleTimeString() };
             history = [firstEntry];
-            localStorage.setItem('mySensorLogs', JSON.stringify(history));
+            localStorage.setItem('weatherStationLogs', JSON.stringify(history));
         }
 
         updateUI(history[0]);
@@ -146,23 +167,29 @@
 
     function renderTable(history) {
         const body = document.getElementById('log-body');
-        body.innerHTML = history.map(h => `
+        body.innerHTML = history.map(h => {
+            const aqi = getAQIInfo(h.gases);
+            return `
             <tr>
-                <td>${h.time || new Date().toLocaleTimeString()}</td>
-                <td style="font-weight:bold; color:${getAQIInfo(h.gases).color}">${getAQIInfo(h.gases).val}</td>
-                <td>${h.gases.co}</td>
-                <td>${h.gases.nh3}</td>
-                <td>${h.temp_dht}°C</td>
+                <td style="color: #7f8c8d;">${h.time}</td>
+                <td><b>${h.temp_dht.toFixed(1)}</b></td>
+                <td>${h.gases["CO₂"].toFixed(2)}</td>
+                <td>${h.gases["Methane"].toFixed(2)}</td>
+                <td>${h.gases["NH₃"].toFixed(2)}</td>
+                <td><span style="background:${aqi.color}; color:white; padding:3px 8px; border-radius:12px; font-size:0.8rem; font-weight:bold;">${aqi.val} - ${aqi.label}</span></td>
             </tr>
-        `).join('');
+            `;
+        }).join('');
     }
 
-    // 4. Live Connection (Web Serial)
+    // 4. Live Connection Logic (Web Serial API)
     connectBtn.addEventListener('click', async () => {
         try {
             const port = await navigator.serial.requestPort();
             await port.open({ baudRate: 115200 });
-            connectBtn.textContent = "✅ System Online";
+            
+            connectBtn.textContent = "✅ Hardware Connected";
+            connectBtn.style.background = "var(--success)";
             
             const decoder = new TextDecoderStream();
             port.readable.pipeTo(decoder.writable);
@@ -178,23 +205,23 @@
                     buffer = lines.pop();
                     const latest = JSON.parse(lines[lines.length-1]);
                     
-                    // Save new live data to history
-                    let history = JSON.parse(localStorage.getItem('mySensorLogs') || '[]');
+                    let history = JSON.parse(localStorage.getItem('weatherStationLogs') || '[]');
                     latest.time = new Date().toLocaleTimeString();
                     history.unshift(latest);
-                    history = history.slice(0, 10);
-                    localStorage.setItem('mySensorLogs', JSON.stringify(history));
+                    history = history.slice(0, 15); // Keep last 15 logs
+                    localStorage.setItem('weatherStationLogs', JSON.stringify(history));
                     
                     updateUI(latest);
                     renderTable(history);
                 }
             }
-        } catch (e) { console.log(e); }
+        } catch (e) { 
+            console.log("Serial Connection Failed or Cancelled:", e); 
+        }
     });
 
-    init(); // Run on startup
+    init(); 
 </script>
 
 </body>
 </html>
-
